@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu&display=swap");
+
+html{
+    -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
+    max-height: 100%;
+    left: 0;
+}
+  
+body {
+    font-family: "Ubuntu", sans-serif;
+    font-size: 0.8rem;
+    height: 100%;
+    width: 100%;
+}
+  .App {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    align-self: center;
+    background-color: white;
+    height: 100%;
+    width: 100%;
+}
+.readMain{
+    background-color: rgb(181, 161, 255);
+    width: 100%;
+    height: 100%;
+    margin: auto;
+}
+.readCont{
+    width: 80%;
+    height: 200px;
+    background-color: white;
+    margin: auto;
+    border-radius: 30px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.readBox{
+    width: 80%;
+    height: 60px;
+    background-color: white;
+    border-bottom: solid 1px black;
+    margin: auto;
+    margin-top: 40px;
+    font-size: 40px;
+}
+.buttonCont{
+    margin-left: 40px;
+    margin-top: 30px; 
+}
+.playButton{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: rgb(115, 128, 0);
+    display: inline-block;
+    margin-right: 30px;
+
+    &-icon{
+        font-size: 60px;
+        color: white;
+        margin: auto;
+    }
+
+}
+.stopButton{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: red;
+    display: inline-block;
+
+    &-icon{
+        font-size: 60px;
+        color: white;
+        margin: auto;
+    }
+}
