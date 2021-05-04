@@ -9,7 +9,6 @@ declare var Blob: any;
 const ReadCont = () => {
 
     const [mediaRecorder, setMediaRecorder] = useState({state: null});
-    const [audioSamp, setAudioSamp] = useState(Array);
 
 
     const checkAudioPermission = () => {
@@ -32,20 +31,16 @@ const ReadCont = () => {
         const mediaRecorder: any = new MediaRecorder(stream);
         setMediaRecorder(mediaRecorder);
 
-        console.log(audioSamp);
         mediaRecorder.ondataavailable = function(e: any) {
             //setAudioSamp(audioSamp.push(e.data));
             
 
             //plays audio snippet
-            const audio: any = document.getElementById("aud");
-            audio.setAttribute('controls', '');
             var blob: any = new Blob([e.data], { 
                 'type': 'audio/mp3' 
               });
             // var audioURL = window.URL.createObjectURL(blob);
             // audio.src = audioURL;
-            console.log(blob)
             localStorage.myfile = blob;
             sendAudio(blob);
         }
@@ -77,7 +72,6 @@ const ReadCont = () => {
                     <BsStopFill className="stopButton-icon"/>
                 </div>
             </div>
-            <audio id="aud"/>
             
         </div>
     )
