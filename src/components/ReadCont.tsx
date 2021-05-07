@@ -1,80 +1,94 @@
-import React from 'react'
-import {useState} from 'react/'
-import {BsFillPlayFill, BsStopFill} from 'react-icons/bs'
-import {sendAudio} from './scripting/request'
+import React from "react";
+import ReactDOM from 'react-dom'
+import { useState } from "react/";
+import { BsFillPlayFill, BsStopFill } from "react-icons/bs";
+import { sendAudio, recieve, recieveOff, phrases } from "./scripting/request";
+import Phrases from './Phrases';
 
 declare var MediaRecorder: any;
 declare var Blob: any;
 
+
 const ReadCont = () => {
+  const [mediaRec, setMediaRec] = useState({ state: null });
+  const [apiWords, setApiWords] = useState([]);
+  const [text, setText] = useState(phrases);
 
-    const [mediaRecorder, setMediaRecorder] = useState({state: null});
-
-
-    const checkAudioPermission = () => {
-        if (navigator.mediaDevices) {
-            var media = navigator.mediaDevices.getUserMedia({audio: true});
-            media.then((stream) => {
-                startRecording(stream);
-            });
-            media.catch((err) => {
-                console.log("Media Error: " + err );
-            });
-
-        }else{
-            console.log("getUserMedia not supported on browser");
-        }
+  
+  const checkAudioPermission = () => {
+    if (navigator.mediaDevices) {
+      var media = navigator.mediaDevices.getUserMedia({ audio: true });
+      media.then((stream) => {
+        startRecording(stream);
+      });
+      media.catch((err) => {
+        console.log("Media Error: " + err);
+      });
+    } else {
+      console.log("getUserMedia not supported on browser");
     }
+  };
 
-    const startRecording = (stream: object) => {
-       
-        const mediaRecorder: any = new MediaRecorder(stream);
-        setMediaRecorder(mediaRecorder);
+  const startRecording = (stream: object) => {
+    var mediaRecorder: any = new MediaRecorder(stream);
+    var chunks: any = [];
+    setMediaRec(mediaRecorder);
 
-        mediaRecorder.ondataavailable = function(e: any) {
-            //setAudioSamp(audioSamp.push(e.data));
-            
+    //begin awaiting io response
+    recieve()
+    .then((ph: any) => {
+      setText(ph);
+      ReactDOM.render(<Phrases phrase={ph}/>, document.getElementById("readBox"));
+    })
 
-            //plays audio snippet
-            var blob: any = new Blob([e.data], { 
-                'type': 'audio/mp3' 
-              });
-            // var audioURL = window.URL.createObjectURL(blob);
-            // audio.src = audioURL;
-            localStorage.myfile = blob;
-            sendAudio(blob);
-        }
+    mediaRecorder.ondataavailable = function (e: any) {
+      chunks.push(e.data);
 
-        mediaRecorder.start(1000);
-        console.log(mediaRecorder.state);
+      var blob: any = new Blob(chunks, {
+        type: "audio/mp3",
+      });
 
-    }
+      //send file to server
+      sendAudio(blob);
+      //console.log(blob);
+    };
+    mediaRecorder.start(1500);
 
-    const stopRecording = (mediaRecorder: any) => {
-        if(mediaRecorder && mediaRecorder.state === "recording"){
-            mediaRecorder.stop();
+    var t = setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === "inactive") {
+            return;
         }
         else{
-            console.log("Not Recording!");
+            mediaRecorder.stop();
+            checkAudioPermission();
         }
-        
+
+    }, 9000);
+  };
+
+  const stopRecording = (mediaRecorder: any) => {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+    } else {
+      console.log("Not Recording!");
     }
-    return (
-        <div className="readCont">
-            <div className="readBox">
+  };
 
-            </div>
-            <div className="buttonCont">
-                <div className="playButton" onClick={() => checkAudioPermission()}>
-                    <BsFillPlayFill className="playButton-icon"/>
-                </div>
-                <div className="stopButton" onClick={() => stopRecording(mediaRecorder)}>
-                    <BsStopFill className="stopButton-icon"/>
-                </div>
-            </div>
-            
+  return (
+    <div className="readCont">
+      <div className="readBox" id="readBox">
+          <Phrases phrase={text}/>
+      </div>
+      <div className="buttonCont">
+        <div className="playButton" onClick={() => checkAudioPermission()}>
+          <BsFillPlayFill className="playButton-icon" />
         </div>
-    )
-}
+        <div className="stopButton" onClick={() => stopRecording(mediaRec)}>
+          <BsStopFill className="stopButton-icon" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
-export default ReadCont
+export default ReadCont;

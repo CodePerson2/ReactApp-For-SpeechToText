@@ -60,6 +60,7 @@ body {
     background-color: rgb(115, 128, 0);
     display: inline-block;
     margin-right: 30px;
+    cursor: pointer;
 
     &-icon{
         font-size: 60px;
@@ -74,10 +75,20 @@ body {
     border-radius: 50%;
     background-color: red;
     display: inline-block;
+    cursor: pointer;
 
     &-icon{
         font-size: 60px;
         color: white;
         margin: auto;
     }
+}
+
+.word{
+    display: inline-block;
+    border-radius: 15px;
+    font-size: 35px;
+    margin: 0px 3px;
+    padding: 1px 3px;
+
 }
