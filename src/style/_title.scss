@@ -1,0 +1,36 @@
+.bookCont{
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: baseline;
+    
+    
+
+    &-Each{
+        width: 300px;
+        height: 500px;
+        text-align: center;
+
+        img{
+            width: 250px;
+            height: 400px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.363);
+            transition: all 0.3s ease-in;
+            cursor: pointer;
+            margin-top: 50px;
+        }
+        img:hover{
+            transform: scale(1.1);
+            box-shadow: 0px 15px 15px rgba(0, 0, 0, 0.363);
+        }
+
+    }
+}
+
+.bookIntro{
+    font-size: 30px;
+    text-align: center;
+    margin: 30px 30px;
+    margin-top: 60px;
+}
