@@ -1,3 +1,5 @@
+// React Component for displaying each word
+
 type wordProp = {
   word: string;
   highlight: boolean;

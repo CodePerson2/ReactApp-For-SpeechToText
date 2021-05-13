@@ -1,7 +1,10 @@
 import { book } from "../SingleBook";
 declare var io: any;
+
+// Use Socket.io at '/' in node server
 var socket = io.connect("/");
 
+// Type used for recieving data from node server
 type data = {
   file: {
     success: number;
@@ -9,6 +12,7 @@ type data = {
   };
 };
 
+// Each Word Object definition for the words spoken
 type phrase = {
   word: string;
   highlight: boolean;
@@ -18,15 +22,23 @@ type phrase = {
   current: boolean;
 };
 
+// Array of word objects
 export type phraseArr = phrase[];
 
+// Array of word objects used as the basis and will be left untouched
 export var originalPhrases: phraseArr = [];
 
+// Array of word objects and will be changed as user speaks
 export var phrases: phraseArr = [];
 
+// last phrase recieved from node server
 var lastAPIPhrase: string = "";
 
+// Location of speaker in paragraph
 var speechLoc: number = 0;
+
+// Function sets the book selected into the paragraph
+// Splits phrase
 
 export const setBook = (book: book) => {
   var newBook: string[] = book.paragraph.split(".");
@@ -47,6 +59,7 @@ export const setBook = (book: book) => {
   var count: number = 0;
   var obj: phrase;
 
+  // Pushes book object into array
   bookPeriod.forEach((b) => {
     obj = {
       word: b,
@@ -63,6 +76,7 @@ export const setBook = (book: book) => {
   phrases = JSON.parse(JSON.stringify(originalPhrases));
 };
 
+// resets values from the script
 export const restartApp = () => {
   phrases = [];
   phrases = JSON.parse(JSON.stringify(originalPhrases));
@@ -70,11 +84,14 @@ export const restartApp = () => {
 
 };
 
+// recieves data from server and returns a promise
 export const recieve = () => {
   return new Promise((res, rej) => {
     socket.on("audioText", (data: data) => {
       removeHighlight();
       if (data.file.success === 1) {
+
+        // parse phrase if words are returned
         parseWords(data.file.transcript, res);
       } else {
         res(phrases);
@@ -83,18 +100,22 @@ export const recieve = () => {
   });
 };
 
+// Turn socket off
 export const recieveOff = () => {
   socket.off("audioText", () => {
     console.log("socket is off");
   });
 };
 
+// Send audio function
 export const sendAudio = (audio: any) => {
   socket.emit("audio", {
     file: audio,
   });
 };
 
+// Takes phrases recieved from Googles Speech-To-Text API and parses it for common words and structure
+// Takes the 'string' and a 'result' promise
 const parseWords = (apiWords: string, res: any) => {
 
   if(apiWords === lastAPIPhrase) return;
@@ -107,8 +128,10 @@ const parseWords = (apiWords: string, res: any) => {
   var lastWord: { current: boolean } = { current: false };
   var count: number = 0;
 
+  // iterates through the words in the paragragh
   phrases.forEach((p) => {
     if (p.current === true) lastWord = p;
+    // iterates through the words in the API returned string
     apiArr.forEach((a) => {
       if (
         !p.alreadySpoken &&
@@ -129,6 +152,7 @@ const parseWords = (apiWords: string, res: any) => {
         return (p.highlight = true);
       }
     });
+    // Reserved for periods, dealing with them
     if (p.word === "." && speechLoc === p.key - 1) {
       p.alreadySpoken = true;
       p.highlight = true
@@ -137,13 +161,17 @@ const parseWords = (apiWords: string, res: any) => {
     }
     count++;
   });
+  // returns the new paragraph object array
   res(phrases);
   
 };
 
+// function called on recieve that fades the words spoken out
+// Does this after 2 seconds
 const removeHighlight = () => {
+  const fadeTime: number = 2000;
   phrases.forEach((p) => {
-    if (p.highlight && p.time < Date.now() - 2000) {
+    if (p.highlight && p.time < Date.now() - fadeTime) {
       return (p.highlight = false);
     } else return;
   });

@@ -1,3 +1,5 @@
+// React Speech-To-Text App
+
 import React from 'react';
 import './style/style.css';
 import ReadMain from './components/ReadMain';

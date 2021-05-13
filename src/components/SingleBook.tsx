@@ -1,5 +1,5 @@
-import React from 'react'
-
+// React Component for each book in the selection state
+// Book type
 export type book = {
     title: string;
     author: string;

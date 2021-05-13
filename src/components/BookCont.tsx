@@ -1,4 +1,6 @@
-import React from "react";
+// Selection page for the books
+// imports books.tsx to get the book objects
+
 import SingleBook from "./SingleBook";
 import { book } from "./SingleBook";
 

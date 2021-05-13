@@ -1,3 +1,7 @@
+// Book objects the hold data on the 4 books to choose from in the App
+
+
+// book Type imported
 import {book} from '../SingleBook';
 
 export const books: book[] = [

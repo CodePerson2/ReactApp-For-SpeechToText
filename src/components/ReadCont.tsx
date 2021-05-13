@@ -1,5 +1,3 @@
-import React from "react";
-import ReactDOM from "react-dom";
 import { useState } from "react/";
 import { BsStopFill, BsFillSkipStartFill, BsFillMicFill, BsFillHouseFill } from "react-icons/bs";
 import {
@@ -10,23 +8,32 @@ import {
 } from "./scripting/request";
 import Phrases from "./Phrases";
 
+// declares Javascript Objects
 declare var MediaRecorder: any;
 declare var Blob: any;
 
 const ReadCont = ({startTransition}: any) => {
+
+  // MediaRecorder stored in state
   const [mediaRec, setMediaRec] = useState({ state: null });
+
+  // status of recording
   const [currentlyRecording, setCurrentlyRecording] = useState(false);
 
-
+  // checks audio permissions and then begins recording
   const checkAudioPermission = () => {
     if(mediaRec.state === 'recording') return;
 
     if (navigator.mediaDevices) {
       var media = navigator.mediaDevices.getUserMedia({ audio: true });
+
+      // if Okay to record, begin recording
       media.then((stream) => {
         startRecording(stream);
         setCurrentlyRecording(true);
       });
+
+      // console out error
       media.catch((err) => {
         console.log("Media Error: " + err);
       });
@@ -35,7 +42,7 @@ const ReadCont = ({startTransition}: any) => {
     }
   };
 
-
+  // called if mediaRecorder is okay to record
   const startRecording = (stream: object) => {
     var mediaRecorder: any = new MediaRecorder(stream);
     var chunks: any = [];
@@ -45,11 +52,15 @@ const ReadCont = ({startTransition}: any) => {
     recieve().then((ph: any) => {
     });
 
+    // recieves chunks of data every 1.5 seconds 
+    // sends audio to server if blob is > 0
+    const receiverTime: number = 1500;
     mediaRecorder.ondataavailable = function (e: any) {
       chunks.push(e.data);
 
       var blob: any;
 
+      // Audio Blob to mp3 blob
       blob = new Blob(chunks, {
         type: "audio/mp3",
       });
@@ -57,17 +68,23 @@ const ReadCont = ({startTransition}: any) => {
 
       //send file to server
     };
-    mediaRecorder.start(1500);
+    mediaRecorder.start(receiverTime);
 
+    // Timer
     mediaTimer(mediaRecorder);
   };
 
+  // Timer initializes timeout for mediaRecorder to complete audio recording
+  // when new mediaRecorder is being created
+  // turn-around time is 3 seconds
   const mediaTimer = (mediaRecorder: any) => {
     var t = setTimeout(() => {
       if (mediaRecorder && mediaRecorder.state === "inactive") {
         return;
       } else {
         checkAudioPermission();
+
+        // stop mediaRecorder 1 second after new mediaRecorder is created
         setTimeout(() => {
           mediaRecorder.stop();
         }, 1000);
@@ -75,6 +92,7 @@ const ReadCont = ({startTransition}: any) => {
     }, 3000);
   };
 
+  // Stops recording media if conditions are met
   const stopRecording = (mediaRecorder: any) => {
     if (mediaRecorder && mediaRecorder.state === "recording") {
       mediaRecorder.stop();
@@ -82,7 +100,10 @@ const ReadCont = ({startTransition}: any) => {
     }
   };
 
+  // When user clicks <-- back button to restart speech to text paragraph
   const restartSpeech = (mediaRecorder: any) => {
+
+    // resets values in request.tsx file
     stopRecording(mediaRec);
 
     setMediaRec({ state: null });
