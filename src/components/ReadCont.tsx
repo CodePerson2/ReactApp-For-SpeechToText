@@ -5,11 +5,8 @@ import { BsStopFill, BsFillSkipStartFill, BsFillMicFill, BsFillHouseFill } from 
 import {
   sendAudio,
   recieve,
-  recieveOff,
   restartApp,
   phrases,
-  originalPhrases,
-  phraseArr,
 } from "./scripting/request";
 import Phrases from "./Phrases";
 
@@ -19,6 +16,7 @@ declare var Blob: any;
 const ReadCont = ({startTransition}: any) => {
   const [mediaRec, setMediaRec] = useState({ state: null });
   const [currentlyRecording, setCurrentlyRecording] = useState(false);
+
 
   const checkAudioPermission = () => {
     if(mediaRec.state === 'recording') return;
@@ -45,7 +43,6 @@ const ReadCont = ({startTransition}: any) => {
 
     //begin awaiting io response
     recieve().then((ph: any) => {
-      renderWords(ph)
     });
 
     mediaRecorder.ondataavailable = function (e: any) {
@@ -93,9 +90,6 @@ const ReadCont = ({startTransition}: any) => {
 
   };
 
-  const renderWords = (ph: phraseArr) => {
-    return <Phrases phrase={ph} />
-  }
 
   return (
     <div>
@@ -104,7 +98,7 @@ const ReadCont = ({startTransition}: any) => {
       </div>
       <div className="readCont">
         <div className="readBox" id="readBox">
-          {renderWords(phrases)}
+        <Phrases phrase={phrases} />
         </div>
         <div className="buttonCont">
           <div

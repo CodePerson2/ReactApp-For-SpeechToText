@@ -1,5 +1,3 @@
-import React from "react";
-
 type wordProp = {
   word: string;
   highlight: boolean;

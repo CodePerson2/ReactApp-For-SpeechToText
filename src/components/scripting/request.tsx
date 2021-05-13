@@ -24,6 +24,8 @@ export var originalPhrases: phraseArr = [];
 
 export var phrases: phraseArr = [];
 
+var lastAPIPhrase: string = "";
+
 var speechLoc: number = 0;
 
 export const setBook = (book: book) => {
@@ -71,6 +73,7 @@ export const restartApp = () => {
 export const recieve = () => {
   return new Promise((res, rej) => {
     socket.on("audioText", (data: data) => {
+      removeHighlight();
       if (data.file.success === 1) {
         parseWords(data.file.transcript, res);
       } else {
@@ -93,6 +96,10 @@ export const sendAudio = (audio: any) => {
 };
 
 const parseWords = (apiWords: string, res: any) => {
+
+  if(apiWords === lastAPIPhrase) return;
+  lastAPIPhrase = apiWords;
+
   var apiArr: string[] = apiWords.split(" ");
 
   var time = Date.now();
@@ -130,16 +137,13 @@ const parseWords = (apiWords: string, res: any) => {
     }
     count++;
   });
-
-  setTimeout(() => {
-    removeHighlight();
-  }, 1600);
   res(phrases);
+  
 };
 
 const removeHighlight = () => {
   phrases.forEach((p) => {
-    if (p.highlight && p.time < Date.now() - 1500) {
+    if (p.highlight && p.time < Date.now() - 2000) {
       return (p.highlight = false);
     } else return;
   });

@@ -6,12 +6,13 @@ type phrasesProp = {
 };
 
 const Phrases = ({ phrase }: phrasesProp) => {
-  const words = (phrase: object[]): ReactNode => {
-    return phrase.map((p: any) => (
-      <Words key={p.key} word={p.word} highlight={p.highlight} current={p.current} alreadySpoken={p.alreadySpoken}/>
-    ));
-  };
-  return <div className="phrases">{words(phrase)}</div>;
+  return <div className="phrases">
+    {
+      phrase.map((p: any) => (
+        <Words key={p.key} word={p.word} highlight={p.highlight} current={p.current} alreadySpoken={p.alreadySpoken}/>
+      ))
+  }
+  </div>;
 };
 
 export default Phrases;
