@@ -1,7 +1,10 @@
 # `Made By: Mattias Stroman`
 
-### https://github.com/CodePerson2/SimbiDevReact/tree/master
+### Node: https://github.com/CodePerson2/ReactApp-For-SpeechToText
 
-Made For Simbi Foundation Dev Assignment
+#### React Component of my Speech-to-Text Google API React and Node App
 
-React-typescript front-end of assignment
+This App gives the user the choice of 4 books to read from a paragraph excerpt.<br>
+
+The App highlights words understood correctly and then fades them.
+
